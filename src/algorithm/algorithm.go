@@ -117,7 +117,7 @@ func (self node) String() string {
 	if self.next == nil {
 		return fmt.Sprintf("[%d]->", self.code)
 	} else {
-		return fmt.Sprintf("[%d]->[%d]", self.code,self.next.code)
+		return fmt.Sprintf("[%d]->[%d]", self.code, self.next.code)
 	}
 }
 
@@ -157,19 +157,21 @@ func (self nodeList) groupby(f func(pos int, n *node) interface{}, merge func(i1
 	return
 }
 
-func (self *nodeList)ReverseList() {
+//反转链表
+func (self *nodeList) ReverseList() {
 	//先反转链表，再删除
 	var prev *node
-	for crt :=self.head; crt!=nil;  {
-		next:=crt.next
+	for crt := self.head; crt != nil; {
+		next := crt.next
 		crt.next = prev
 		prev = crt
 		crt = next
 	}
-	self.head=prev
+	self.head = prev
 }
 
-func (self *nodeList) RevRemove(idx uint) (head,removed *node) {
+//删除倒数第idx个
+func (self *nodeList) RevRemove(idx uint) (head, removed *node) {
 
 	size := self.groupby(func(pos int, n *node) interface{} {
 		return 1
@@ -184,7 +186,7 @@ func (self *nodeList) RevRemove(idx uint) (head,removed *node) {
 		for i := 0; i < size-int(idx); i++ {
 			targetPrev = targetPrev.next
 		}
-		removed=targetPrev.next
+		removed = targetPrev.next
 		node := removed.next
 		targetPrev.next.next = nil
 		targetPrev.next = node
@@ -196,3 +198,42 @@ func (self *nodeList) RevRemove(idx uint) (head,removed *node) {
 	head = self.head
 	return
 }
+
+//二分查找
+func BinarySearch(arr []int, target int) (index int) {
+	index = -1
+	fromIdx, toIdx := 0, len(arr)
+	for idx := (fromIdx + toIdx) / 2; fromIdx < toIdx; {
+		idxVal := arr[idx]
+		if idxVal == target {
+			index = idx
+			return
+		} else if idxVal < target {
+			fromIdx = idx+1
+		} else {
+			toIdx = idx
+		}
+	}
+	return
+}
+
+//https://github.com/MisterBooo/LeetCodeAnimation/blob/master/notes/LeetCode%E7%AC%AC131%E5%8F%B7%E9%97%AE%E9%A2%98%EF%BC%9A%E5%88%86%E5%89%B2%E5%9B%9E%E6%96%87%E4%B8%B2.md
+// 给定一个字符串 s，将 s 分割成一些子串，使每个子串都是回文串。
+//返回 s 所有可能的分割方案。
+//所谓回文，就是一个正读和反读都一样的字符串。
+//题目解析
+//首先，对于一个字符串的分割，肯定需要将所有分割情况都遍历完毕才能判断是不是回文数。不能因为 abba 是回文串，就认为它的所有子串都是回文的。
+//既然需要将所有的分割方法都找出来，那么肯定需要用到DFS（深度优先搜索）或者BFS（广度优先搜索）。
+//在分割的过程中对于每一个字符串而言都可以分为两部分：左边一个回文串加右边一个子串，比如 "abc" 可分为 "a" + "bc" 。 然后对"bc"分割仍然是同样的方法，分为"b"+"c"。
+//在处理的时候去优先寻找更短的回文串，然后回溯找稍微长一些的回文串分割方法，不断回溯，分割，直到找到所有的分割方法。
+
+
+//https://github.com/MisterBooo/LeetCodeAnimation/blob/master/notes/LeetCode第139号问题：单词拆分.md
+//给定一个非空字符串 s 和一个包含非空单词列表的字典 wordDict，判定 s 是否可以被空格拆分为一个或多个在字典中出现的单词。
+//说明：
+//拆分时可以重复使用字典中的单词。
+//你可以假设字典中没有重复的单词。
+
+
+//给定一个无序的数组，找出数组在排序之后，相邻元素之间最大的差值。如果数组元素个数小于 2，则返回 0。
+//这里需要用到的是不经常使用的一种排序方法 —— 桶排序！
