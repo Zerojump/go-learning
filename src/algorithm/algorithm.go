@@ -209,7 +209,7 @@ func BinarySearch(arr []int, target int) (index int) {
 			index = idx
 			return
 		} else if idxVal < target {
-			fromIdx = idx+1
+			fromIdx = idx + 1
 		} else {
 			toIdx = idx
 		}
@@ -227,13 +227,37 @@ func BinarySearch(arr []int, target int) (index int) {
 //在分割的过程中对于每一个字符串而言都可以分为两部分：左边一个回文串加右边一个子串，比如 "abc" 可分为 "a" + "bc" 。 然后对"bc"分割仍然是同样的方法，分为"b"+"c"。
 //在处理的时候去优先寻找更短的回文串，然后回溯找稍微长一些的回文串分割方法，不断回溯，分割，直到找到所有的分割方法。
 
-
 //https://github.com/MisterBooo/LeetCodeAnimation/blob/master/notes/LeetCode第139号问题：单词拆分.md
 //给定一个非空字符串 s 和一个包含非空单词列表的字典 wordDict，判定 s 是否可以被空格拆分为一个或多个在字典中出现的单词。
 //说明：
 //拆分时可以重复使用字典中的单词。
 //你可以假设字典中没有重复的单词。
 
-
 //给定一个无序的数组，找出数组在排序之后，相邻元素之间最大的差值。如果数组元素个数小于 2，则返回 0。
 //这里需要用到的是不经常使用的一种排序方法 —— 桶排序！
+
+//请实现一个算法，确定一个字符串的所有字符【是否全都不同】。这里我们要求【不允许使用额外的存储结构】。
+//给定一个string，请返回一个bool值,true代表所有字符全都不同，false代表存在相同的字符。
+//保证字符串中的字符为【ASCII字符】。字符串的长度小于等于【3000】。
+func isNoComplicatedCharStr(source string) bool {
+	if len([]rune(source)) > 3000 {
+		return false
+	}
+	for _, v := range source {
+		if strings.Count(source, string(v)) > 1 {
+			return false
+		}
+	}
+	return true
+}
+
+//请实现一个算法，在不使用【额外数据结构和储存空间】的情况下，翻转一个给定的字符串(可以使用单个过程变量)。
+//给定一个string，请返回一个string，为翻转后的字符串。
+func reverseStr(source string) string {
+	runes := []rune(source)
+	size := len(runes)
+	for i, loopTimes := 0, size/2; i < loopTimes; i++ {
+		runes[i], runes[size-i] = runes[size-i], runes[i]
+	}
+	return string(runes)
+}

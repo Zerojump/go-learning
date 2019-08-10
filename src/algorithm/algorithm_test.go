@@ -35,7 +35,3 @@ func TestNodeList_ReverseList(t *testing.T) {
 	nodeList.ReverseList()
 	t.Logf("nodeList = %v", nodeList)
 }
-
-
-
-
