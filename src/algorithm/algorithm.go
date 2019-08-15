@@ -233,6 +233,7 @@ func BinarySearch(arr []int, target int) (index int) {
 //拆分时可以重复使用字典中的单词。
 //你可以假设字典中没有重复的单词。
 
+//https://mp.weixin.qq.com/s/xHxjCDdFZyCW2pnY6Cz8SQ
 //给定一个无序的数组，找出数组在排序之后，相邻元素之间最大的差值。如果数组元素个数小于 2，则返回 0。
 //这里需要用到的是不经常使用的一种排序方法 —— 桶排序！
 
