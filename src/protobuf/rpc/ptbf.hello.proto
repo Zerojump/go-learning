@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package ptbf;
+package main;
 
 message String {
     string value = 1;
