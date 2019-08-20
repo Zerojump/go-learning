@@ -7,6 +7,7 @@ import (
 	"log"
 	"testing"
 	"io"
+	"google.golang.org/grpc/credentials"
 )
 
 type HelloServiceImpl struct {
@@ -55,4 +56,26 @@ func TestServer(t *testing.T) {
 	}
 
 	server.Serve(listener)
+}
+
+func TestTLS_Server(t *testing.T) {
+	listener, err := net.Listen("tcp", ":8574")
+	if err!=nil {
+		log.Fatalf("Failed to listen: %v",err)
+	}
+
+	//TLS 认证
+	creds, err := credentials.NewServerTLSFromFile("tls/server.pem", "tls/server.key")
+	if err!=nil {
+		log.Fatalf("Failed to generate credential %v",err)
+	}
+
+	//实例化grpc Server，并开启TLS认证
+	server := grpc.NewServer(grpc.Creds(creds))
+	//注册HelloService
+	RegisterHelloServiceServer(server,new(HelloServiceImpl))
+
+	log.Println("Listen on localhost:8574 with TLS")
+	server.Serve(listener)
+
 }

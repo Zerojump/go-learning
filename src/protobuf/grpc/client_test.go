@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 	"io"
+	"google.golang.org/grpc/credentials"
 )
 
 
@@ -50,4 +51,25 @@ func TestClient(t *testing.T) {
 		}
 		log.Println(reply.GetValue())
 	}
+}
+
+func TestTLS_Client(t *testing.T) {
+	creds, err := credentials.NewClientTLSFromFile("tls/server.pem", "hello.cmy.fun")
+	if err!=nil{
+		log.Fatalf("Failed to create TLS credentials %v", err)
+	}
+	conn, err := grpc.Dial("localhost:8547", grpc.WithTransportCredentials(creds))
+	if err!=nil {
+		log.Fatalln(err)
+	}
+	defer conn.Close()
+
+	//初始化客户端
+	client := NewHelloServiceClient(conn)
+	//调用方法
+	reply, err := client.Hello(context.Background(), &String{Value: "hello"})
+	if err!=nil {
+		log.Fatalln(err)
+	}
+	log.Println(reply.GetValue())
 }
