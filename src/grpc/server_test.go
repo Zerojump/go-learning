@@ -8,6 +8,18 @@ import (
 	"testing"
 	"io"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
+	"google.golang.org/grpc/codes"
+	"fmt"
+	"golang.org/x/net/trace"
+	"net/http"
+)
+
+const (
+	port    = ":8574"
+	app_id  = "cid"
+	app_key = "ckey"
 )
 
 type HelloServiceImpl struct {
@@ -50,7 +62,7 @@ func TestServer(t *testing.T) {
 	server := grpc.NewServer()
 	RegisterHelloServiceServer(server, new(HelloServiceImpl))
 
-	listener, err := net.Listen("tcp", ":8574")
+	listener, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalln("server listen err:", err)
 	}
@@ -66,23 +78,90 @@ func TestServer(t *testing.T) {
 //openssl req -new -x509 -sha256 -key server.key -out server.pem -days 3650
 //go test -v server_test.go hello.pb.go -test.run TestTLS_Server
 func TestTLS_Server(t *testing.T) {
-	listener, err := net.Listen("tcp", ":8574")
-	if err!=nil {
-		log.Fatalf("Failed to listen: %v",err)
+	listener, err := net.Listen("tcp", port)
+	if err != nil {
+		log.Fatalf("Failed to listen: %v", err)
 	}
 
 	//TLS 认证
 	creds, err := credentials.NewServerTLSFromFile("tls/server.pem", "tls/server.key")
-	if err!=nil {
-		log.Fatalf("Failed to generate credential %v",err)
+	if err != nil {
+		log.Fatalf("Failed to generate credential %v", err)
 	}
 
 	//实例化grpc Server，并开启TLS认证
 	server := grpc.NewServer(grpc.Creds(creds))
 	//注册HelloService
+	RegisterHelloServiceServer(server, new(HelloServiceImpl))
+
+	log.Println("Listen on localhost" + port + " with TLS")
+	server.Serve(listener)
+}
+
+func TestInterceptorServer(t *testing.T) {
+	listener, err := net.Listen("tcp", "localhost"+port)
+	if err != nil {
+	    fmt.Errorf("%v", err)
+	}
+
+	creds, err := credentials.NewServerTLSFromFile("tls/server.pem", "tls/server.key")
+	if err != nil {
+		fmt.Errorf("%v", err)
+	}
+
+	server := grpc.NewServer(grpc.Creds(creds), grpc.UnaryInterceptor(interceptor))
+	RegisterHelloServiceServer(server,new(HelloServiceImpl))
+	log.Println("Listen on localhost" + port + " with TLS and Interceptor")
+	server.Serve(listener)
+}
+
+func interceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+	err := auth(ctx)
+	if err != nil {
+		return nil, err
+	}
+	//继续执行
+	return handler(ctx, req)
+}
+
+func auth(ctx context.Context) error {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return status.Errorf(codes.Unauthenticated, "无token认证信息")
+	}
+	var appid, appkey string
+	if val, ok := md["appid"]; ok {
+		appid = val[0]
+	}
+	if val, ok := md["appkey"]; ok {
+		appkey = val[0]
+	}
+
+	if appid != app_id || appkey != app_key {
+		return status.Errorf(codes.Unauthenticated, "Invalid token! appid:%s, appkey:%s", appid, appkey)
+	}
+	return nil
+}
+
+func TestTraceServer(t *testing.T) {
+	listener, err := net.Listen("tcp", port)
+	if err != nil {
+		fmt.Errorf("%v", err)
+	}
+	server := grpc.NewServer()
 	RegisterHelloServiceServer(server,new(HelloServiceImpl))
 
-	log.Println("Listen on localhost:8574 with TLS")
+	go startTrace()
+
+	fmt.Println("Listen on",port)
 	server.Serve(listener)
+}
+
+func startTrace()  {
+	trace.AuthRequest = func(req *http.Request) (any, sensitive bool) {
+		return true,true
+	}
+	go http.ListenAndServe(":8704", nil)
+	fmt.Println("Trace listen on 8704")
 
 }
