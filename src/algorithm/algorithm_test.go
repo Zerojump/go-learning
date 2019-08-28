@@ -70,14 +70,22 @@ func TestNodeList_IsRing(t *testing.T) {
 
 func TestRecursionReverse(t *testing.T) {
 	nodeList := NewNodeList([]int{0, 1, 2, 3, 4})
-	t.Logf("nodeList = %v" , *nodeList)
+	t.Logf("nodeList = %v", *nodeList)
 	nodeList.RecursionReverse()
-	t.Logf("*nodeList = %v" , *nodeList)
+	t.Logf("*nodeList = %v", *nodeList)
 }
 
 func TestRecursionReverseNodeListPerK(t *testing.T) {
-	nodeList := NewNodeList([]int{0, 1, 2, 3, 4,0, 1, 2, 3, 4,5,6})
-	t.Logf("*nodeList = %v" , *nodeList)
-	recursionReverseNodeListPerK(5,nodeList)
-	t.Logf("*nodeList = %v" , *nodeList)
+	nodeList := NewNodeList([]int{0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 5, 6})
+	t.Logf("*nodeList = %v", *nodeList)
+	recursionReverseNodeListPerK(5, nodeList)
+	t.Logf("*nodeList = %v", *nodeList)
+}
+
+func TestMerge2SortedList(t *testing.T) {
+	l1 := NewNodeList([]int{1, 3, 4, 7, 8,8,10,11})
+	l2 := NewNodeList([]int{0, 2, 2, 5, 9})
+	list := merge2SortedList(l2, l1)
+	t.Logf("list = %v" , list)
+
 }

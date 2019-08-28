@@ -200,6 +200,7 @@ func recursionReverseNodeListPerK(k int, list *nodeList) {
 }
 
 func recursionReverseNodePerK(k, limit int, prev, cur *node) (*node, *node) {
+	//todo
 	if cur == nil {
 		return prev, nil
 	} else if k == limit {
@@ -207,7 +208,7 @@ func recursionReverseNodePerK(k, limit int, prev, cur *node) (*node, *node) {
 	} else {
 		head, nextK := recursionReverseNodePerK(k+1, limit, cur, cur.next)
 		cur.next = prev
-		if k+1 < limit && prev!=nil {
+		if k+1 < limit && prev != nil {
 			prev.next = nil
 		}
 		fmt.Println("cur:", cur, "  head:", head, "  nextK:", nextK, "  k:", k, "  limit:", limit)
@@ -278,3 +279,44 @@ func recursionReverseNode2(cur *node) *node {
 //}
 
 //合并两个有序链表
+func merge2SortedList(l1, l2 *nodeList) *nodeList {
+	if l1== l2 {
+		return l1
+	}
+	var headN *node
+	cur1 := l1.head
+	cur2 := l2.head
+	if cur1.code <= cur2.code {
+		headN = cur1
+	} else {
+		headN = cur2
+	}
+	for ; cur1 != nil && cur2 != nil; {
+		fmt.Println("cur1:", cur1)
+		if cur1.code <= cur2.code {
+			from1 := cur1
+			for ; from1.next != nil; from1 = from1.next {
+				if from1.next.code > cur2.code {
+					break
+				}
+			}
+			cur1 = from1.next
+			fmt.Println("cur1:", cur1)
+
+			from1.next = cur2
+		}
+		if cur1!= nil {
+			from2 := cur2
+			for ; from2.next != nil; from2 = from2.next {
+				if from2.next.code > cur1.code {
+					break
+				}
+			}
+			cur2 = from2.next
+			fmt.Println("cur2:", cur2)
+			from2.next = cur1
+		}
+	}
+
+	return &nodeList{head: headN}
+}
