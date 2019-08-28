@@ -2,6 +2,7 @@ package algorithm_learing
 
 import (
 	"testing"
+	"math/rand"
 )
 
 func TestSumOf2Num(t *testing.T) {
@@ -39,13 +40,44 @@ func TestNodeList_ReverseList(t *testing.T) {
 func TestRemoveComplicate(t *testing.T) {
 	nodeList := NewNodeList([]int{0, 1, 2, 3, 5, 1, 0, 3, 4})
 	result := RemoveComplicate(nodeList)
-	t.Logf("*nodeList = %v" , *nodeList)
-	t.Logf("result = %v" , *result)
+	t.Logf("*nodeList = %v", *nodeList)
+	t.Logf("result = %v", *result)
 }
 
 func TestNodeList_RemoveComplicate(t *testing.T) {
 	nodeList := NewNodeList([]int{0, 1, 2, 3, 5, 1, 0, 3, 4})
-	t.Logf("*nodeList = %v" , *nodeList)
+	t.Logf("*nodeList = %v", *nodeList)
 	nodeList.RemoveComplicate()
+	t.Logf("*nodeList = %v", *nodeList)
+}
+
+func TestNodeList_IsRing(t *testing.T) {
+	nodeList := NewNodeList([]int{0, 1, 2, 3, 4})
+	t.Logf("nodeList.isRing() = %v", nodeList.isRing())
+
+	target, targetN := rand.Intn(nodeList.Size()), nodeList.head
+	tailN := targetN
+	for i := 0; tailN.next != nil; i++ {
+		if i < target {
+			targetN = targetN.next
+		}
+		tailN = tailN.next
+	}
+	tailN.next = targetN
+
+	t.Logf("nodeList.isRing() = %v", nodeList.isRing())
+}
+
+func TestRecursionReverse(t *testing.T) {
+	nodeList := NewNodeList([]int{0, 1, 2, 3, 4})
+	t.Logf("nodeList = %v" , *nodeList)
+	nodeList.RecursionReverse()
+	t.Logf("*nodeList = %v" , *nodeList)
+}
+
+func TestRecursionReverseNodeListPerK(t *testing.T) {
+	nodeList := NewNodeList([]int{0, 1, 2, 3, 4,0, 1, 2, 3, 4,5,6})
+	t.Logf("*nodeList = %v" , *nodeList)
+	recursionReverseNodeListPerK(5,nodeList)
 	t.Logf("*nodeList = %v" , *nodeList)
 }
