@@ -279,6 +279,7 @@ func recursionReverseNode2(cur *node) *node {
 //}
 
 //合并两个有序链表
+//其实可以比较一次移动一次，不用多次比较再移动一次，这样增加了复杂度，又省不了多少时间
 func merge2SortedList(l1, l2 *nodeList) *nodeList {
 	if l1== l2 {
 		return l1
