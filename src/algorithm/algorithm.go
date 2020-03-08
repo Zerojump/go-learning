@@ -1,6 +1,7 @@
 package algorithm_learing
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -165,4 +166,59 @@ func reverseStr(source string) string {
 		runes[i], runes[size-i] = runes[size-i], runes[i]
 	}
 	return string(runes)
+}
+
+//深度优先算法
+const count = 3
+
+var a, bookD [count]int
+
+func dfs(step int) {
+	if step == count {
+		fmt.Println(a)
+		return
+	}
+	for i := 0; i < count; i++ {
+		if bookD[i] == 0 {
+			a[step] = i + 1 //用牌
+			bookD[i] = 1    //占用标记
+			dfs(step + 1)   //下探
+			bookD[i] = 0    //归还
+		}
+	}
+}
+
+//广度优先算法
+const size = 5
+
+var head, tail int
+var bookB [size]int
+var q [size * size]int
+var graph [size][size]int
+
+func bfs() {
+	q[tail] = 0
+	bookB[tail] = 1
+	tail++
+	//head = tail
+	for head < tail {
+		cur := q[head]
+		for i := 0; i < size; i++ {
+			if graph[cur][i] == 1 && bookB[i] == 0 {
+				fmt.Println(cur, "->", i)
+				q[tail] = i
+				tail++
+				bookB[i] = 1
+			} else {
+				fmt.Println(cur, "-/>", i)
+			}
+
+			if tail > size {
+				break
+			}
+		}
+		fmt.Println(bookB)
+		head++
+	}
+	fmt.Println(q)
 }

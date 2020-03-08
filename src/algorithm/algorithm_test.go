@@ -1,8 +1,9 @@
 package algorithm_learing
 
 import (
-	"testing"
+	"fmt"
 	"math/rand"
+	"testing"
 )
 
 func TestSumOf2Num(t *testing.T) {
@@ -83,9 +84,23 @@ func TestRecursionReverseNodeListPerK(t *testing.T) {
 }
 
 func TestMerge2SortedList(t *testing.T) {
-	l1 := NewNodeList([]int{1, 3, 4, 7, 8,8,10,11})
+	l1 := NewNodeList([]int{1, 3, 4, 7, 8, 8, 10, 11})
 	l2 := NewNodeList([]int{0, 2, 2, 5, 9})
 	list := merge2SortedList(l2, l1)
-	t.Logf("list = %v" , list)
+	t.Logf("list = %v", list)
 
+}
+
+func TestDfs(t *testing.T) {
+	dfs(0)
+}
+
+func TestBfs(t *testing.T) {
+	rel := [][2]int{{0, 1}, {0, 2}, {0, 4}, {1, 3}}
+	for _, v := range rel {
+		graph[v[0]][v[1]] = 1
+		graph[v[1]][v[0]] = 1
+	}
+	fmt.Println(graph)
+	bfs()
 }
